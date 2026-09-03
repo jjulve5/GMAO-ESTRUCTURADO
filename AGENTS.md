@@ -1,0 +1,35 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
+---
+
+# Reglas del proyecto GMAO
+
+Estas reglas son de obligado cumplimiento en este repositorio.
+
+1. **Separación de responsabilidades.**
+   - `src/services/` es el ÚNICO sitio donde puede aparecer `supabase.from(...)`.
+   - `src/lib/` guarda configuración e infraestructura, no lógica de negocio.
+   - `src/components/` y `src/app/` solo pintan; reciben datos por `props` o
+     desde un servicio.
+   - `process.env` solo se lee en `src/lib/env.ts`.
+
+2. **No reescribir código de fases anteriores sin permiso explícito.** Si para
+   avanzar hace falta modificar algo ya aprobado, hay que parar, explicar el
+   motivo técnico y esperar aprobación. Nada de parches silenciosos.
+
+3. **Nada de datos de prueba inventados** para mantenimientos, materiales o
+   planes. Los datos vienen de volcados reales de SAP PM (`supabase/sap-dumps/`).
+
+4. **Imprimir el árbol de directorios** cada vez que se creen carpetas o
+   ficheros nuevos.
+
+5. **Comentarios en español**, por bloques lógicos, explicando QUÉ hace el
+   bloque y POR QUÉ está así. Sin comentarios línea a línea redundantes.
