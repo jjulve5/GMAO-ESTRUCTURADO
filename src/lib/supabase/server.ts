@@ -79,7 +79,7 @@ export async function crearClienteServidor() {
 
   return createServerClient(
     configPublica.supabaseUrl,
-    configPublica.supabaseAnonKey,
+    configPublica.supabaseClavePublica,
     {
       cookies: {
         // Lectura: entregamos a Supabase las cookies entrantes tal cual.

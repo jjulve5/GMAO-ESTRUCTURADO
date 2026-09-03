@@ -58,6 +58,6 @@ import { configPublica } from "@/lib/env";
 export function crearClienteNavegador() {
   return createBrowserClient(
     configPublica.supabaseUrl,
-    configPublica.supabaseAnonKey,
+    configPublica.supabaseClavePublica,
   );
 }
