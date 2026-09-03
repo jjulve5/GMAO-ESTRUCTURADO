@@ -146,3 +146,62 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
 - **Errata corregida:** `AGENTS.md` afirmaba que "estas cuatro reglas" estaban
   implementadas en ESLint. Son cinco restricciones documentadas y tres reglas de
   ESLint. Ninguna de las dos cifras era cuatro.
+
+## D-007 · Copias de seguridad: aplazadas hasta después del lanzamiento
+
+- **Fecha:** 2026-09-03 · **Fase:** 1 · **Estado:** aplazada conscientemente
+- **Decisión del responsable del proyecto:** evaluar si compensa pagar un plan
+  con copias automáticas **una vez la aplicación esté lanzada y en uso**.
+- **Riesgo que se asume mientras tanto:** el plan gratuito de Supabase no
+  incluye copias descargables ni recuperación a un punto en el tiempo. Un
+  `delete` sin `where`, o un error en un script de importación, son
+  irreversibles. Las migraciones versionadas protegen la **estructura** de las
+  tablas, no los **datos**.
+- **Límite acordado:** el riesgo es aceptable mientras la base de datos solo
+  contenga volcados de SAP, que se pueden reimportar. **Deja de serlo en el
+  momento en que el primer técnico registre trabajo real**, porque eso ya no se
+  puede recuperar de ninguna otra fuente.
+- **A revisar antes de:** poner la aplicación en manos de los técnicos.
+
+## D-008 · Evaluación de Firebase como alternativa a Supabase
+
+- **Fecha:** 2026-09-03 · **Fase:** 1 · **Estado:** evaluada; se mantiene Supabase
+- **Pregunta planteada:** ¿compensa migrar a Firebase por sus condiciones?
+- **Conclusión: no, y el motivo no es el precio sino el modelo de datos.**
+  Supabase es PostgreSQL (relacional, con SQL y JOINs). Firestore es una base
+  documental sin JOINs ni agregaciones. Los datos de este proyecto vienen de
+  SAP PM y son relacionales por naturaleza: ubicaciones técnicas jerárquicas,
+  equipos que cuelgan de ellas, planes con listas de tareas y operaciones,
+  órdenes que enlazan equipo, plan, técnico y materiales.
+- **Tres puntos concretos que lo deciden:**
+  1. **Fase 7 (comparativas diarias de actividad)** son agregaciones
+     `GROUP BY ... COUNT`. Firestore no las soporta: obligaría a mantener
+     contadores precalculados a mano o a exportar a BigQuery, otro producto y
+     otra factura.
+  2. **La importación de SAP.** En PostgreSQL es un `COPY ... FROM` de un CSV.
+     En Firestore es un script documento a documento, y **se paga por
+     escritura**: el plan gratuito permite 20.000 al día, de modo que un solo
+     volcado del maestro de materiales puede agotar la cuota diaria, y
+     reimportar tras corregir un error costaría otro día.
+  3. **El coste por operación se traslada al diseño de pantallas.** En Firestore
+     cada documento leído se factura: una lista de 50 órdenes son 50 lecturas.
+     Treinta técnicos navegando rozan el límite diario de 50.000 lecturas. En
+     PostgreSQL esa misma pantalla es una consulta.
+- **Lo que Firebase sí hace mejor, reconocido:** persistencia **sin conexión**
+  nativa y madura en su SDK, notificaciones push mediante FCM, y no pausa los
+  proyectos inactivos.
+- **Pregunta abierta que podría reabrir esta decisión:** si los técnicos van a
+  trabajar en zonas de la planta **sin cobertura**, el modo offline deja de ser
+  una comodidad y pasa a ser un requisito. Aun así, la respuesta previsible no
+  sería sustituir Supabase por Firebase, sino añadir una capa de trabajo sin
+  conexión en el navegador sobre PostgreSQL.
+- **Coste de migrar, si algún día se decidiera:** se perderían los clientes de
+  Supabase, `env.ts`, las reglas de ESLint que nombran `@supabase/*` y toda la
+  planificación SQL de las Fases 3 y 6. **Se conservaría** la separación
+  frontend/backend, la CI, el formateo y la disciplina de servicios: la
+  arquitectura en capas está diseñada precisamente para que el proveedor de
+  datos sea sustituible sin tocar la interfaz.
+- **Nota sobre las fuentes:** los límites de ambos planes gratuitos proceden de
+  fuentes secundarias, porque ni `supabase.com` ni la documentación de Firebase
+  eran accesibles desde el entorno donde se redactó esta nota. Conviene
+  verificarlos antes de tomar cualquier decisión económica.
