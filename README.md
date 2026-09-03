@@ -10,16 +10,16 @@ mantenimiento preventivo y correctivo, alimentada con volcados reales de
 
 ## Pila tecnológica
 
-| Pieza | Versión instalada | Para qué |
-|---|---|---|
-| Next.js (App Router) | 16.3.4 | Framework: rutas, renderizado en servidor, API |
-| React | 19.2.8 | Interfaz |
-| TypeScript | ^5 (modo `strict`) | Tipado estático |
-| Tailwind CSS | ^4 | Estilos |
-| ESLint | ^9 | Análisis estático |
-| `@supabase/supabase-js` | 2.115.0 | Cliente de base de datos y auth |
-| `@supabase/ssr` | 0.12.5 | Sesión vía cookies (servidor + navegador) |
-| `supabase` (CLI, dev) | — | Migraciones y generación de tipos |
+| Pieza                   | Versión instalada  | Para qué                                       |
+| ----------------------- | ------------------ | ---------------------------------------------- |
+| Next.js (App Router)    | 16.3.4             | Framework: rutas, renderizado en servidor, API |
+| React                   | 19.2.8             | Interfaz                                       |
+| TypeScript              | ^5 (modo `strict`) | Tipado estático                                |
+| Tailwind CSS            | ^4                 | Estilos                                        |
+| ESLint                  | ^9                 | Análisis estático                              |
+| `@supabase/supabase-js` | 2.115.0            | Cliente de base de datos y auth                |
+| `@supabase/ssr`         | 0.12.5             | Sesión vía cookies (servidor + navegador)      |
+| `supabase` (CLI, dev)   | —                  | Migraciones y generación de tipos              |
 
 > `@supabase/auth-helpers-nextjs` está **obsoleto** (marcado como `deprecated`
 > en npm). Este proyecto usa `@supabase/ssr`, que es su sustituto oficial.
@@ -65,11 +65,11 @@ src/
 
 `npm run lint` **falla** si incumples cualquiera de estas:
 
-| Regla | Dónde se permite |
-|---|---|
+| Regla                                              | Dónde se permite                 |
+| -------------------------------------------------- | -------------------------------- |
 | Importar `@supabase/ssr` o `@supabase/supabase-js` | solo `src/backend/lib/supabase/` |
-| Leer `process.env` | solo `src/backend/config/env.ts` |
-| Que `src/frontend/` importe de `src/backend/` | solo tipos, con `import type` |
+| Leer `process.env`                                 | solo `src/backend/config/env.ts` |
+| Que `src/frontend/` importe de `src/backend/`      | solo tipos, con `import type`    |
 
 Ese último matiz tiene motivo: los tipos de TypeScript **se borran al
 compilar**, así que importarlos no crea ninguna dependencia en el programa que
@@ -83,6 +83,14 @@ ficheros son genuinamente mixtos: se ejecutan en el servidor y producen el HTML
 que llega al navegador. Ver `src/app/README.md` y la decisión D-005.
 
 ## Puesta en marcha
+
+### Requisitos
+
+**Node.js 22 o superior.** La versión exacta con la que se construye y verifica
+el proyecto está en `.nvmrc`; si usas `nvm`, basta con `nvm use` dentro de la
+carpeta. Next 16 declara un mínimo de 20.9, pero fijamos 22 porque es la línea
+con la que está probado: pedir menos invita a fallos que solo aparecen en la
+máquina de otra persona.
 
 ```bash
 # 1. Dependencias
@@ -99,12 +107,28 @@ npm run dev            # http://localhost:3000
 ### Comandos disponibles
 
 ```bash
-npm run dev        # desarrollo con recarga en caliente
-npm run build      # compilación de producción
-npm run start      # sirve la compilación de producción
-npm run lint       # ESLint
-npm run typecheck  # comprueba los tipos sin generar ficheros
+npm run dev           # desarrollo con recarga en caliente
+npm run build         # compilación de producción
+npm run start         # sirve la compilación de producción
+
+npm run lint          # reglas de arquitectura + análisis estático
+npm run typecheck     # comprueba los tipos sin generar ficheros
+npm run format        # formatea el código (Prettier)
+npm run format:check  # comprueba el formato sin tocar nada
+
+npm run verify        # ↑ los cuatro anteriores, en orden.
+                      #   Ejecútalo antes de subir código: es exactamente
+                      #   lo que hará la CI de GitHub.
 ```
+
+### Integración continua
+
+`.github/workflows/ci.yml` ejecuta `format:check`, `lint`, `typecheck` y `build`
+en cada push y cada pull request, sobre una instalación limpia (`npm ci`).
+
+Esto es lo que hace que las reglas de arquitectura sean **obligatorias** y no
+una recomendación: sin CI, un `git push` con las reglas violadas entraría en el
+repositorio sin que nadie se enterase.
 
 > En la Fase 1 la aplicación arranca **sin** `.env.local`: la página de inicio
 > no toca Supabase a propósito. La configuración pasará a ser obligatoria en la
@@ -114,15 +138,15 @@ npm run typecheck  # comprueba los tipos sin generar ficheros
 
 ## Plan de fases
 
-| # | Fase | Estado |
-|---|---|---|
-| 1 | Setup e infraestructura | ✅ hecho |
-| 2 | Autenticación y roles de usuario (Admin, Técnico…) | ⏭️ siguiente |
-| 3 | Base de datos core (esquemas SQL preparados para volcado SAP) | ⬜ |
-| 4 | Planes preventivos (cronogramas y checks) | ⬜ |
-| 5 | Asignación y ejecución de tareas | ⬜ |
-| 6 | Recambios (stock por códigos SAP) | ⬜ |
-| 7 | Reportes y notificaciones (comparativas diarias) | ⬜ |
+| #   | Fase                                                          | Estado       |
+| --- | ------------------------------------------------------------- | ------------ |
+| 1   | Setup e infraestructura                                       | ✅ hecho     |
+| 2   | Autenticación y roles de usuario (Admin, Técnico…)            | ⏭️ siguiente |
+| 3   | Base de datos core (esquemas SQL preparados para volcado SAP) | ⬜           |
+| 4   | Planes preventivos (cronogramas y checks)                     | ⬜           |
+| 5   | Asignación y ejecución de tareas                              | ⬜           |
+| 6   | Recambios (stock por códigos SAP)                             | ⬜           |
+| 7   | Reportes y notificaciones (comparativas diarias)              | ⬜           |
 
 ---
 

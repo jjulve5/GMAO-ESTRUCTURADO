@@ -7,10 +7,10 @@
 Componentes de React que **solo pintan**: reciben datos por `props` y devuelven
 lo que se ve. No saben de dónde vienen esos datos ni cómo se guardan.
 
-| Subcarpeta | Contiene | Cuántos habrá |
-|---|---|---|
-| `ui/` | Piezas genéricas: `Boton`, `Tabla`, `Badge`, `Modal` | muchos |
-| `layout/` | El armazón: `Cabecera`, `BarraLateral`, `Pie` | uno de cada |
+| Subcarpeta | Contiene                                             | Cuántos habrá |
+| ---------- | ---------------------------------------------------- | ------------- |
+| `ui/`      | Piezas genéricas: `Boton`, `Tabla`, `Badge`, `Modal` | muchos        |
+| `layout/`  | El armazón: `Cabecera`, `BarraLateral`, `Pie`        | uno de cada   |
 
 ## Qué NO va aquí
 
@@ -21,7 +21,7 @@ Ambas cosas las bloquea ESLint: no compilan.
 
 ## Cómo distinguir `ui/` de `layout/`
 
-Pregúntate: *¿cuántos de estos habrá en la aplicación terminada?*
+Pregúntate: _¿cuántos de estos habrá en la aplicación terminada?_
 
 - Muchos, y en pantallas distintas → `ui/`
 - Uno solo, y siempre visible → `layout/`

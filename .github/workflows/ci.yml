@@ -1,0 +1,87 @@
+# =============================================================================
+#  CI — Comprobación automática en cada push y pull request
+# =============================================================================
+#
+#  QUÉ HACE
+#  --------
+#  Cada vez que se sube código a GitHub, una máquina limpia instala el proyecto
+#  desde cero y ejecuta las mismas comprobaciones que ejecutamos en local:
+#  formato, reglas de arquitectura, tipos y compilación.
+#
+#  POR QUÉ EXISTE (esto es lo importante)
+#  --------------------------------------
+#  Las reglas de arquitectura del proyecto (regla nº 1: el frontend no toca la
+#  base de datos, process.env solo se lee en un sitio...) están escritas como
+#  reglas de ESLint. Pero ESLint solo actúa SI ALGUIEN LO EJECUTA.
+#
+#  Sin este fichero, cualquiera puede hacer `git push` con las reglas violadas
+#  y GitHub lo acepta sin decir nada. La regla sería una recomendación educada.
+#
+#  Con este fichero, el push aparece marcado en rojo y se ve exactamente qué
+#  regla se ha incumplido y en qué línea. Eso es lo que convierte la
+#  arquitectura en algo que se sostiene solo, sin depender de que nadie se
+#  acuerde de nada.
+#
+#  "Instala desde cero" tampoco es un detalle: detecta el caso clásico de que
+#  algo funcione en tu portátil porque tienes un paquete instalado a mano que
+#  no está declarado en package.json.
+
+name: CI
+
+on:
+  push:
+    branches: ["**"] # cualquier rama
+  pull_request:
+
+jobs:
+  verificar:
+    name: Formato, reglas, tipos y compilación
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Traer el código del repositorio a la máquina de la CI.
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      # 2. Instalar Node. La versión se lee de .nvmrc, así que basta cambiar
+      #    ese fichero para que local y CI vayan siempre a la par: es
+      #    imposible que se desincronicen sin darse cuenta.
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      # 3. `npm ci` en lugar de `npm install`: instala EXACTAMENTE las
+      #    versiones de package-lock.json y falla si el lock no cuadra con
+      #    package.json. Es lo que garantiza que la CI comprueba el mismo
+      #    árbol de dependencias que tienes tú.
+      - name: Instalar dependencias
+        run: npm ci
+
+      # 4. Formato. Solo comprueba, no modifica nada.
+      - name: Comprobar formato (Prettier)
+        run: npm run format:check
+
+      # 5. Reglas de arquitectura y análisis estático.
+      - name: Comprobar reglas de arquitectura (ESLint)
+        run: npm run lint
+
+      # 6. Tipos.
+      - name: Comprobar tipos (TypeScript)
+        run: npm run typecheck
+
+      # 7. Compilación de producción.
+      #
+      #    Las variables de abajo son VALORES FALSOS a propósito. Next.js
+      #    necesita que existan para compilar, pero la CI no se conecta a
+      #    ninguna base de datos: solo comprueba que el código compila.
+      #
+      #    No son secretos y no dan acceso a nada. Las credenciales reales
+      #    viven en el .env.local de cada uno, que nunca se sube al
+      #    repositorio.
+      - name: Compilar
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://ci-falso.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_valor_falso_de_ci

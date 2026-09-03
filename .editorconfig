@@ -1,0 +1,16 @@
+# Ajustes básicos del editor, respetados por VS Code, JetBrains, Vim y otros.
+# Evita que dos personas con configuraciones distintas se peleen por la
+# indentación en cada commit.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.md]
+# En Markdown, dos espacios al final de línea significan "salto de línea".
+trim_trailing_whitespace = false

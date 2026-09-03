@@ -12,11 +12,11 @@ separan y a partir de ese momento nadie sabe cuál es el esquema bueno.
 
 ## Qué hay dentro
 
-| Carpeta | Contiene |
-|---|---|
+| Carpeta       | Contiene                                           |
+| ------------- | -------------------------------------------------- |
 | `migrations/` | Ficheros `.sql` numerados: el esquema, paso a paso |
-| `seed/` | Datos mínimos imprescindibles (catálogos, estados) |
-| `sap-dumps/` | Los volcados **reales** exportados de SAP PM |
+| `seed/`       | Datos mínimos imprescindibles (catálogos, estados) |
+| `sap-dumps/`  | Los volcados **reales** exportados de SAP PM       |
 
 Cada una tiene su propia ficha explicándose.
 

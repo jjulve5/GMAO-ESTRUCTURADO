@@ -4,9 +4,9 @@
 
 Contiene `supabase/`, con los dos clientes de conexión:
 
-| Fichero | Dónde se ejecuta |
-|---|---|
-| `client.ts` | En el **navegador** del usuario |
+| Fichero     | Dónde se ejecuta                                |
+| ----------- | ----------------------------------------------- |
+| `client.ts` | En el **navegador** del usuario                 |
 | `server.ts` | En el **servidor**, uno nuevo por cada petición |
 
 Son dos porque el navegador y el servidor acceden a las cookies de sesión de

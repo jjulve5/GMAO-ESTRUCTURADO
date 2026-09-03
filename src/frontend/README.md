@@ -8,12 +8,12 @@ Si lo puedes ver en la pantalla o hacerle clic, está aquí.
 
 ## Qué hay dentro
 
-| Carpeta / fichero | Contiene |
-|---|---|
-| `components/ui/` | Piezas sueltas: botones, tablas, etiquetas de estado |
-| `components/layout/` | El armazón: cabecera, menú lateral, pie |
-| `hooks/` | Lógica de pantalla reutilizable |
-| `constants.ts` | Nombre del producto y direcciones de las pantallas |
+| Carpeta / fichero    | Contiene                                             |
+| -------------------- | ---------------------------------------------------- |
+| `components/ui/`     | Piezas sueltas: botones, tablas, etiquetas de estado |
+| `components/layout/` | El armazón: cabecera, menú lateral, pie              |
+| `hooks/`             | Lógica de pantalla reutilizable                      |
+| `constants.ts`       | Nombre del producto y direcciones de las pantallas   |
 
 ## La regla (nº 1 del proyecto)
 

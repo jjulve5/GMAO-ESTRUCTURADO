@@ -28,9 +28,14 @@ Estas reglas son de obligado cumplimiento en este repositorio.
    - `src/frontend/` y `src/app/` solo pintan; reciben datos por `props` o
      llamando a un servicio.
 
-   Estas cuatro reglas están implementadas como reglas de ESLint en
-   `eslint.config.mjs`: incumplirlas hace fallar `npm run lint`, no es solo una
-   convención escrita.
+   Tres de estas restricciones están implementadas como reglas de ESLint en
+   `eslint.config.mjs` (importar `@supabase/*`, leer `process.env`, e importar
+   backend desde frontend). Incumplirlas hace fallar `npm run lint`, y la CI de
+   GitHub (`.github/workflows/ci.yml`) las ejecuta en cada push, así que no
+   dependen de que nadie se acuerde de comprobarlas.
+
+   Antes de dar por terminado cualquier cambio: `npm run verify`, que encadena
+   formato, reglas, tipos y compilación — exactamente lo mismo que hará la CI.
 
 2. **No reescribir código de fases anteriores sin permiso explícito.** Si para
    avanzar hace falta modificar algo ya aprobado, hay que parar, explicar el

@@ -21,6 +21,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import prettierApagaFormato from "eslint-config-prettier/flat";
 
 /**
  * Mensajes largos como constantes: aparecen en la consola cuando algo falla, y
@@ -44,12 +45,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
 
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 
   /* ==========================================================================
    * REGLA A — Nadie abre conexiones a Supabase por su cuenta
@@ -140,6 +136,21 @@ const eslintConfig = defineConfig([
     files: ["src/backend/config/env.ts"],
     rules: { "no-restricted-properties": "off" },
   },
+
+  /* ==========================================================================
+   * Prettier — desactiva las reglas de FORMATO de ESLint
+   * ==========================================================================
+   * Va la ÚLTIMA a propósito: en la configuración plana de ESLint gana el
+   * último bloque que toca una regla. Así nos aseguramos de apagar cualquier
+   * regla de formato que traigan las configuraciones de Next.
+   *
+   * Motivo: del formato se encarga Prettier (`npm run format`). Si además lo
+   * vigilase ESLint, tendríamos dos herramientas discutiendo entre ellas sobre
+   * dónde va una coma, con avisos que se contradicen.
+   *
+   * OJO: esto NO toca las reglas de arquitectura de arriba. Solo apaga formato.
+   */
+  prettierApagaFormato,
 ]);
 
 export default eslintConfig;

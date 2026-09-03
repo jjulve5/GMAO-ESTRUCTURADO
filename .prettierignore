@@ -1,0 +1,13 @@
+# Generado o descargado: no lo formateamos nosotros.
+node_modules
+.next
+out
+build
+package-lock.json
+
+# Fichero generado por el CLI de Supabase.
+supabase/config.toml
+
+# Volcados reales de SAP: se guardan EXACTAMENTE como salen del sistema.
+# Reformatearlos rompería la trazabilidad con el origen.
+supabase/sap-dumps

@@ -12,8 +12,7 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
 - **Contexto:** el enunciado hablaba de un GMAO "local", palabra que admite dos
   lecturas incompatibles: aplicación de uso interno alojada en la nube, o base
   de datos corriendo en un servidor de la propia planta.
-- **Decisión:** empezamos con **Supabase Cloud** para no bloquear las Fases 2 y
-  3. La opción de autoalojar (Supabase en Docker, en un servidor de la empresa)
+- **Decisión:** empezamos con **Supabase Cloud** para no bloquear las Fases 2 y 3. La opción de autoalojar (Supabase en Docker, en un servidor de la empresa)
   se reevalúa al terminar la Fase 3, cuando ya exista el esquema real.
 - **Motivo:** el autoalojamiento traslada backups, actualizaciones,
   certificados HTTPS y disponibilidad al equipo interno. Asumir eso antes de
@@ -81,13 +80,13 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
   `src/app/` se queda donde está y se documenta como **zona mixta**.
 - **Base técnica comprobada** (documentación de Next 16 incluida en
   `node_modules/next/dist/docs/`):
-  - `src-folder.md`: *"move the `app` Router folder to `src/app`"*, y
-    *"`src/app` will be ignored if `app` is present in the root directory"*.
+  - `src-folder.md`: _"move the `app` Router folder to `src/app`"_, y
+    _"`src/app` will be ignored if `app` is present in the root directory"_.
     Por tanto `app/` **no** se puede mover dentro de `frontend/`: la aplicación
     se quedaría sin rutas.
-  - `02-project-structure.md`: *"we're using `components` and `lib` folders as
+  - `02-project-structure.md`: _"we're using `components` and `lib` folders as
     generalized placeholders, their naming has no special framework
-    significance"*. Por tanto el resto de carpetas sí se puede renombrar sin
+    significance"_. Por tanto el resto de carpetas sí se puede renombrar sin
     riesgo.
 - **Se descartó** un monorepo real (`frontend/` + `backend/` con dos
   `package.json`): obligaría a renunciar a los Server Components y las Server
@@ -109,3 +108,41 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
   más una línea con en qué fase se creó, en cuál se llena y su estado actual.
   Los ficheros `.gitkeep` se sustituyeron por esos `README.md`, que cumplen la
   misma función de mantener la carpeta en git y además la explican.
+
+## D-006 · Cierre de la Fase 1: CI, herramientas y versión de Node
+
+- **Fecha:** 2026-09-03 · **Fase:** 1 · **Estado:** aprobada
+- **Contexto:** una auditoría del cierre de la Fase 1 destapó que la afirmación
+  "las reglas de arquitectura son mecánicas" era **falsa a medias**. Las reglas
+  de ESLint solo actúan si alguien ejecuta `npm run lint`, y nada lo obligaba:
+  un `git push` con las tres reglas violadas habría entrado sin aviso.
+- **Decisiones tomadas:**
+  1. **CI en GitHub Actions** (`.github/workflows/ci.yml`): en cada push y pull
+     request, instalación limpia con `npm ci` y ejecución de `format:check`,
+     `lint`, `typecheck` y `build`. Esto es lo que convierte la arquitectura en
+     algo que se sostiene sin depender de la memoria de nadie. La compilación
+     usa credenciales falsas declaradas en el propio workflow: la CI no se
+     conecta a ninguna base de datos, solo comprueba que el código compila.
+  2. **CLI de Supabase inicializado** (`npx supabase init`), que crea
+     `supabase/config.toml`. Sin ese fichero no se pueden aplicar migraciones ni
+     generar los tipos en la Fase 3. Comprobado antes de hacerlo: el CLI
+     respondía `LegacyProjectNotLinkedError`. Se ajustó `[db.seed].sql_paths` de
+     `./seed.sql` (que no existe) a `./seed/*.sql`, que es nuestra carpeta.
+     Revisado que el fichero generado no contiene ningún secreto.
+  3. **Versión de Node fijada**: `.nvmrc` con 22.22.2 y `engines` en
+     `package.json`. Next 16 declara un mínimo de `>=20.9.0` (comprobado en su
+     `package.json`), pero se exige 22 por ser la línea con la que el proyecto
+     está construido y verificado. La CI lee la versión de `.nvmrc`, de modo que
+     local y CI no pueden desincronizarse.
+  4. **Prettier + EditorConfig** con script `npm run format`. Se añade
+     `eslint-config-prettier` al FINAL de `eslint.config.mjs` para apagar las
+     reglas de formato de ESLint y que las dos herramientas no se contradigan.
+     Comprobado explícitamente, escribiendo ficheros que las incumplen, que ese
+     añadido **no** desactiva las tres reglas de arquitectura.
+     `supabase/sap-dumps/` queda excluido del formateo: los volcados de SAP se
+     guardan exactamente como salen del sistema.
+- **Añadido `npm run verify`**, que encadena las cuatro comprobaciones en el
+  mismo orden que la CI, para poder reproducir en local lo que fallará en remoto.
+- **Errata corregida:** `AGENTS.md` afirmaba que "estas cuatro reglas" estaban
+  implementadas en ESLint. Son cinco restricciones documentadas y tres reglas de
+  ESLint. Ninguna de las dos cifras era cuatro.

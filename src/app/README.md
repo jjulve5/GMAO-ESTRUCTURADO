@@ -15,7 +15,7 @@ export default function PaginaInicio() {
 ```
 
 Este fichero **se ejecuta en el servidor**. Allí se convierte en HTML, y lo que
-llega al navegador es texto ya montado. Es un *Server Component*: puede leer la
+llega al navegador es texto ya montado. Es un _Server Component_: puede leer la
 base de datos, pero se ve en pantalla. Frontend y backend en el mismo fichero.
 
 Solo cuando un componente necesita reaccionar a clics o guardar estado se marca
@@ -26,20 +26,20 @@ con `"use client"` arriba del todo, y entonces sí viaja al navegador.
 Porque Next.js **no lo permite**. Cita literal de su documentación, incluida en
 `node_modules/next/dist/docs/`:
 
-> *"move the `app` Router folder to `src/app`"* — y *"`src/app` will be ignored
-> if `app` is present in the root directory"*
+> _"move the `app` Router folder to `src/app`"_ — y _"`src/app` will be ignored
+> if `app` is present in the root directory"_
 
 Las rutas se leen de `app/` o de `src/app/`. En ningún otro sitio. Si moviéramos
 esta carpeta, la aplicación dejaría de tener páginas.
 
 ## Qué hay dentro
 
-| Fichero | Qué es |
-|---|---|
-| `layout.tsx` | El envoltorio común a todas las páginas: `<html>`, fuentes, título |
-| `page.tsx` | La pantalla de la dirección `/`. Provisional; se sustituye en la Fase 2 |
-| `globals.css` | Estilos base y carga de Tailwind |
-| `favicon.ico` | El iconito de la pestaña del navegador |
+| Fichero       | Qué es                                                                  |
+| ------------- | ----------------------------------------------------------------------- |
+| `layout.tsx`  | El envoltorio común a todas las páginas: `<html>`, fuentes, título      |
+| `page.tsx`    | La pantalla de la dirección `/`. Provisional; se sustituye en la Fase 2 |
+| `globals.css` | Estilos base y carga de Tailwind                                        |
+| `favicon.ico` | El iconito de la pestaña del navegador                                  |
 
 ## Cómo se crean pantallas nuevas
 

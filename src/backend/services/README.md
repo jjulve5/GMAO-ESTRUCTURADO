@@ -37,7 +37,9 @@ El servicio **recibe** el cliente de Supabase como parámetro en vez de crearlo
 export async function obtenerOrdenesPendientes(
   supabase: SupabaseClient<Database>,
   tecnicoId: string,
-) { /* ... */ }
+) {
+  /* ... */
+}
 ```
 
 **Por qué:** así la misma función sirve tanto ejecutada en el servidor como en

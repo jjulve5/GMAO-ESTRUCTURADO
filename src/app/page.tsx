@@ -38,8 +38,16 @@ import { APP } from "@/frontend/constants";
 const FASES = [
   { n: 1, titulo: "Setup e infraestructura", estado: "hecho" },
   { n: 2, titulo: "Autenticación y roles de usuario", estado: "siguiente" },
-  { n: 3, titulo: "Base de datos core (esquemas para volcado SAP)", estado: "pendiente" },
-  { n: 4, titulo: "Planes preventivos (cronogramas y checks)", estado: "pendiente" },
+  {
+    n: 3,
+    titulo: "Base de datos core (esquemas para volcado SAP)",
+    estado: "pendiente",
+  },
+  {
+    n: 4,
+    titulo: "Planes preventivos (cronogramas y checks)",
+    estado: "pendiente",
+  },
   { n: 5, titulo: "Asignación y ejecución de tareas", estado: "pendiente" },
   { n: 6, titulo: "Recambios (stock por códigos SAP)", estado: "pendiente" },
   { n: 7, titulo: "Reportes y notificaciones", estado: "pendiente" },
