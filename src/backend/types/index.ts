@@ -1,12 +1,12 @@
 /**
  * =============================================================================
- *  src/types/index.ts  —  Punto único de entrada a los tipos del dominio
+ *  src/backend/types/index.ts  —  Punto único de entrada a los tipos del dominio
  * =============================================================================
  *
  * QUÉ HACE
  * --------
  * Reexporta los tipos del proyecto para poder escribir siempre
- * `import type { ... } from "@/types"` en vez de recordar en qué fichero
+ * `import type { ... } from "@/backend/types"` en vez de recordar en qué fichero
  * concreto vive cada tipo.
  *
  * ESTADO EN LA FASE 1
@@ -15,7 +15,7 @@
  * OrdenTrabajo...) NO se van a escribir a mano: se GENERARÁN a partir del
  * esquema real de PostgreSQL en la Fase 3 con el comando
  *
- *     npx supabase gen types typescript --linked > src/types/database.types.ts
+ *     npx supabase gen types typescript --linked > src/backend/types/database.types.ts
  *
  * POR QUÉ GENERARLOS EN LUGAR DE ESCRIBIRLOS
  * -------------------------------------------

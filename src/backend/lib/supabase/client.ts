@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- *  src/lib/supabase/client.ts  —  Cliente Supabase para el NAVEGADOR
+ *  src/backend/lib/supabase/client.ts  —  Cliente Supabase para el NAVEGADOR
  * =============================================================================
  *
  * QUÉ HACE
@@ -33,7 +33,7 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 
-import { configPublica } from "@/lib/env";
+import { configPublica } from "@/backend/config/env";
 
 /**
  * Devuelve el cliente de Supabase válido en el navegador.
@@ -52,7 +52,7 @@ import { configPublica } from "@/lib/env";
  * NOTA DE ARQUITECTURA (LEY nº 1):
  * Este fichero es INFRAESTRUCTURA, no lógica de negocio. Aquí nunca habrá
  * un `.from("tabla").select()`. Todas las consultas a tablas vivirán en
- * `/src/services`. Los componentes llaman a los servicios; los servicios
+ * `/src/backend/services`. Los componentes llaman a los servicios; los servicios
  * llaman a este cliente.
  */
 export function crearClienteNavegador() {

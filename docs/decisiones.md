@@ -71,3 +71,41 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
 - **A revisar:** si en algún momento hiciera falta incorporar datos de empresa,
   se decide antes si el fichero puede vivir en el repositorio o debe quedarse
   fuera mediante `.gitignore`.
+
+## D-005 · Estructura visible frontend / backend dentro de `src/`
+
+- **Fecha:** 2026-09-03 · **Fase:** 1 · **Estado:** aprobada
+- **Contexto:** los nombres `components`, `lib` y `services` no dejaban claro de
+  un vistazo qué parte del código toca datos y qué parte solo pinta.
+- **Decisión:** el código se reorganiza en `src/frontend/` y `src/backend/`.
+  `src/app/` se queda donde está y se documenta como **zona mixta**.
+- **Base técnica comprobada** (documentación de Next 16 incluida en
+  `node_modules/next/dist/docs/`):
+  - `src-folder.md`: *"move the `app` Router folder to `src/app`"*, y
+    *"`src/app` will be ignored if `app` is present in the root directory"*.
+    Por tanto `app/` **no** se puede mover dentro de `frontend/`: la aplicación
+    se quedaría sin rutas.
+  - `02-project-structure.md`: *"we're using `components` and `lib` folders as
+    generalized placeholders, their naming has no special framework
+    significance"*. Por tanto el resto de carpetas sí se puede renombrar sin
+    riesgo.
+- **Se descartó** un monorepo real (`frontend/` + `backend/` con dos
+  `package.json`): obligaría a renunciar a los Server Components y las Server
+  Actions, y añadiría CORS, dos despliegues y autenticación duplicada. Para 30
+  usuarios, coste sin beneficio.
+- **Efecto colateral aceptado:** `src/lib/constants.ts` se partió en dos, porque
+  mezclaba capas. `APP` y `RUTAS` (presentación) van a
+  `src/frontend/constants.ts`; `ORIGEN_SAP` (origen de los datos) va a
+  `src/backend/config/sap.ts`.
+- **Refuerzo añadido:** la separación deja de depender de la memoria y pasa a
+  ser mecánica. `eslint.config.mjs` implementa tres reglas, verificadas con
+  ficheros que las incumplen a propósito:
+  1. solo `src/backend/lib/supabase/` puede importar `@supabase/*`;
+  2. `src/frontend/` no puede importar valores de `src/backend/`, pero sí tipos;
+  3. `process.env` solo se lee en `src/backend/config/env.ts`.
+- **Estándar de documentación adoptado:** cada carpeta lleva un `README.md` cuya
+  primera línea sigue el formato
+  `FASE X · FRONTEND|BACKEND|MIXTO · explicación sencilla de qué contiene`,
+  más una línea con en qué fase se creó, en cuál se llena y su estado actual.
+  Los ficheros `.gitkeep` se sustituyeron por esos `README.md`, que cumplen la
+  misma función de mantener la carpeta en git y además la explican.

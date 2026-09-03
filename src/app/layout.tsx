@@ -25,7 +25,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { APP } from "@/lib/constants";
+import { APP } from "@/frontend/constants";
 import "./globals.css";
 
 // Fuente de texto general. `variable` crea una variable CSS que Tailwind usa.
@@ -43,7 +43,7 @@ const geistMono = Geist_Mono({
 
 /**
  * Metadatos por defecto. Cada página podrá sobrescribirlos exportando su
- * propio `metadata`. Se leen de `@/lib/constants` para no repetir el nombre
+ * propio `metadata`. Se leen de `@/frontend/constants` para no repetir el nombre
  * del producto en varios sitios.
  */
 export const metadata: Metadata = {

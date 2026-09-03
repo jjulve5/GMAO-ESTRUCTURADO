@@ -1,12 +1,11 @@
-# `/docs` — Documentación del proyecto
+# FASE 1 · DOCUMENTACIÓN · Qué se decidió y por qué
 
-Notas de diseño, decisiones tomadas y su motivo, y correspondencia entre los
-campos de SAP PM y las tablas de nuestra base de datos.
+> **Creada en:** Fase 1 · **Se llena en:** todas las fases · **Estado actual:** en uso
 
-Previsto:
+| Fichero | Contenido |
+|---|---|
+| `decisiones.md` | Registro de decisiones técnicas: qué, cuándo, por qué, y qué queda por revisar. |
+| `mapeo-sap.md` | *(Fase 3)* Equivalencias campo a campo entre SAP PM y nuestras tablas. |
 
-- `fases.md` — estado y alcance cerrado de cada fase.
-- `mapeo-sap.md` — tabla de equivalencias campo a campo SAP PM → PostgreSQL
-  (se escribirá en la Fase 3, al recibir los volcados reales).
-- `decisiones.md` — registro de decisiones técnicas: qué se decidió, cuándo y
-  por qué. Sirve para no rediscutir lo mismo tres fases después.
+Existe para no rediscutir lo mismo tres fases más adelante y para que este
+proyecto se entienda sin tener que preguntarme.

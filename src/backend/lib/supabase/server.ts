@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- *  src/lib/supabase/server.ts  —  Cliente Supabase para el SERVIDOR
+ *  src/backend/lib/supabase/server.ts  —  Cliente Supabase para el SERVIDOR
  * =============================================================================
  *
  * QUÉ HACE
@@ -61,7 +61,7 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-import { configPublica } from "@/lib/env";
+import { configPublica } from "@/backend/config/env";
 
 /**
  * Crea un cliente Supabase ligado a las cookies de la petición actual.

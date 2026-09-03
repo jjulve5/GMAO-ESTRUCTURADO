@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- *  src/lib/env.ts  —  Lectura y validación de variables de entorno
+ *  src/backend/config/env.ts  —  Lectura y validación de variables de entorno
  * =============================================================================
  *
  * QUÉ HACE

@@ -14,12 +14,23 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Estas reglas son de obligado cumplimiento en este repositorio.
 
-1. **Separación de responsabilidades.**
-   - `src/services/` es el ÚNICO sitio donde puede aparecer `supabase.from(...)`.
-   - `src/lib/` guarda configuración e infraestructura, no lógica de negocio.
-   - `src/components/` y `src/app/` solo pintan; reciben datos por `props` o
-     desde un servicio.
-   - `process.env` solo se lee en `src/lib/env.ts`.
+1. **Separación de responsabilidades.** El código se divide en dos mitades:
+   `src/frontend/` (lo que se ve) y `src/backend/` (lo que toca datos).
+   `src/app/` es zona mixta impuesta por Next.js: contiene las rutas.
+
+   - `src/backend/services/` es el ÚNICO sitio donde puede aparecer
+     `supabase.from(...)`.
+   - `src/backend/lib/supabase/` es el ÚNICO sitio que puede importar
+     `@supabase/ssr` o `@supabase/supabase-js`.
+   - `process.env` solo se lee en `src/backend/config/env.ts`.
+   - `src/frontend/` no importa nada de `src/backend/`, salvo tipos con
+     `import type` (los tipos se borran al compilar y no crean dependencia real).
+   - `src/frontend/` y `src/app/` solo pintan; reciben datos por `props` o
+     llamando a un servicio.
+
+   Estas cuatro reglas están implementadas como reglas de ESLint en
+   `eslint.config.mjs`: incumplirlas hace fallar `npm run lint`, no es solo una
+   convención escrita.
 
 2. **No reescribir código de fases anteriores sin permiso explícito.** Si para
    avanzar hace falta modificar algo ya aprobado, hay que parar, explicar el

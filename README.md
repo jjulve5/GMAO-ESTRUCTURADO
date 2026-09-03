@@ -27,30 +27,60 @@ mantenimiento preventivo y correctivo, alimentada con volcados reales de
 
 ---
 
-## Arquitectura: separación de responsabilidades
+## Arquitectura: dónde está cada cosa
 
-La regla que gobierna todo el proyecto:
+El código se parte en dos mitades con nombres que se entienden sin explicación:
 
 ```
-  src/app/  ·  src/components/          →  pintan
-        │
-        ▼
-  src/services/                         →  consultan la base de datos
-        │
-        ▼
-  src/lib/supabase/                     →  configuran la conexión
-        │
-        ▼
-  Supabase / PostgreSQL
+src/
+├── app/         FASE 1 · MIXTO     rutas y pantallas  (Next.js obliga a que esté aquí)
+├── frontend/    FASE 1 · FRONTEND  todo lo que el usuario ve y toca
+│   ├── components/ui/       botones, tablas, etiquetas
+│   ├── components/layout/   cabecera, menú, pie
+│   ├── hooks/               lógica de pantalla reutilizable
+│   └── constants.ts         nombre del producto y rutas
+└── backend/     FASE 1 · BACKEND   todo lo que toca datos
+    ├── config/              variables de entorno y origen SAP
+    ├── lib/supabase/        la conexión (navegador y servidor)
+    ├── services/            LAS CONSULTAS. Único sitio con supabase.from()
+    └── types/               la forma de los datos, generada desde la BD
 ```
 
-- **Ningún** componente ni página contiene `supabase.from(...)`.
-- **Ninguna** consulta a la base de datos vive fuera de `src/services/`.
-- **Ninguna** lectura de `process.env` vive fuera de `src/lib/env.ts`.
+**Cada carpeta lleva su propio `README.md`** con el formato
+`FASE X · FRONTEND|BACKEND|MIXTO · qué contiene`. Si te pierdes, ábrelo.
 
-Cada carpeta tiene su propio `README.md` explicando qué va dentro y por qué.
+### El recorrido de un dato
 
----
+```
+  src/app/          (pantalla)   ─┐
+  src/frontend/     (se ve)      ─┴─►  backend/services/  ──►  backend/lib/supabase/
+                                            │                        │
+                                       las consultas            la conexión
+                                                                     │
+                                                                     ▼
+                                                        Supabase / PostgreSQL
+```
+
+### Las reglas no son una recomendación: las aplica ESLint
+
+`npm run lint` **falla** si incumples cualquiera de estas:
+
+| Regla | Dónde se permite |
+|---|---|
+| Importar `@supabase/ssr` o `@supabase/supabase-js` | solo `src/backend/lib/supabase/` |
+| Leer `process.env` | solo `src/backend/config/env.ts` |
+| Que `src/frontend/` importe de `src/backend/` | solo tipos, con `import type` |
+
+Ese último matiz tiene motivo: los tipos de TypeScript **se borran al
+compilar**, así que importarlos no crea ninguna dependencia en el programa que
+se ejecuta. Importar una función, sí.
+
+### ¿Por qué `src/app/` no está dentro de `frontend/`?
+
+Porque Next.js no lo permite: las rutas se leen de `app/` o de `src/app/`, y de
+ningún otro sitio (documentado en `node_modules/next/dist/docs/`). Además esos
+ficheros son genuinamente mixtos: se ejecutan en el servidor y producen el HTML
+que llega al navegador. Ver `src/app/README.md` y la decisión D-005.
 
 ## Puesta en marcha
 

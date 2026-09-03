@@ -20,16 +20,16 @@
  *
  * LO QUE ESTA PÁGINA *NO* HACE, Y ES INTENCIONADO
  * -----------------------------------------------
- * No consulta la base de datos ni importa nada de `@/lib/supabase`. Cuando
+ * No consulta la base de datos ni importa nada de `@/backend/lib/supabase`. Cuando
  * llegue el momento de mostrar datos reales, esta página pedirá los datos a un
- * servicio de `/src/services` (LEY nº 1). Además, si importase la
+ * servicio de `/src/backend/services` (LEY nº 1). Además, si importase la
  * configuración de Supabase ahora, la aplicación no arrancaría sin un
  * `.env.local` relleno — y en la Fase 1 todavía no lo hay.
  *
  * Esta pantalla se reemplazará en la Fase 2 por el flujo de login.
  */
 
-import { APP } from "@/lib/constants";
+import { APP } from "@/frontend/constants";
 
 /**
  * Estado del plan de trabajo. Se define aquí, y no en `constants.ts`, porque
