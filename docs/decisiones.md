@@ -205,3 +205,86 @@ cualquiera que llegue nuevo entienda por qué el proyecto es como es.
   fuentes secundarias, porque ni `supabase.com` ni la documentación de Firebase
   eran accesibles desde el entorno donde se redactó esta nota. Conviene
   verificarlos antes de tomar cualquier decisión económica.
+
+## D-009 · Los cuatro roles del GMAO
+
+- **Fecha:** 2026-09-04 · **Fase:** 2 · **Estado:** aprobada
+- **Decisión del responsable del proyecto:** `supervisor`, `tecnico`,
+  `operario` (perfil de solo creación de solicitudes) y `recambista` (hay una
+  sola persona en el almacén).
+- **Implementación:** tipo `ENUM` de PostgreSQL `public.rol_usuario`, no una
+  columna de texto libre. Un valor mal escrito falla al insertar en vez de
+  crear en silencio un rol fantasma que no encaja con ninguna política RLS y
+  deja a esa persona sin ver nada y sin ningún mensaje que lo explique.
+- **Consecuencia asumida:** añadir un rol más adelante es posible
+  (`alter type ... add value`), pero eliminar uno obliga a recrear el tipo y a
+  revisar todas las políticas que lo mencionen.
+
+## D-010 · Acceso con correo y contraseña, altas solo por supervisor
+
+- **Fecha:** 2026-09-04 · **Fase:** 2 · **Estado:** aprobada
+- **Decisión:** no existe registro público. Las cuentas las crea un supervisor
+  desde la propia aplicación, con una contraseña inicial que entrega en mano.
+- **Consecuencia técnica que adelanta trabajo previsto para la Fase 3:** crear
+  la cuenta de otra persona exige la API de administración de Supabase
+  (`auth.admin.*`), que solo funciona con la **clave secreta**. Por tanto
+  `SUPABASE_SECRET_KEY` pasa a ser obligatoria en `.env.local` desde la Fase 2,
+  y no desde la Fase 3 como se dijo al escribir `.env.example`.
+- **Dónde vive la clave (elegido entre tres opciones):** en el `.env.local` del
+  servidor de Next. Se descartó una Edge Function de Supabase por añadir otro
+  runtime y otro despliegue que mantener, desproporcionado para una
+  herramienta interna de treinta usuarios; y se descartó crear las cuentas a
+  mano desde el panel de Supabase por ser una herramienta que no se le puede
+  poner delante a un jefe de mantenimiento.
+- **Tres barreras impiden que esa clave llegue al navegador:** `server-only`
+  (que rompe la compilación si un componente de cliente la importa), la
+  lectura diferida dentro de una función, y la ausencia del prefijo
+  `NEXT_PUBLIC_`.
+
+## D-011 · `middleware.ts` no existe en Next 16: es `proxy.ts`
+
+- **Fecha:** 2026-09-04 · **Fase:** 2 · **Estado:** aplicada
+- **Hallazgo:** la documentación de Next incluida en el propio proyecto
+  (`node_modules/next/dist/docs/.../file-conventions/middleware.md`) dice
+  literalmente que _«the `middleware.js` file convention has been deprecated in
+  Next.js 16 and renamed to `proxy.js`»_.
+- **Por qué se registra:** prácticamente toda la documentación y todos los
+  tutoriales de Supabase con Next siguen indicando `middleware.ts`, porque son
+  anteriores al cambio. Escribirlo de memoria habría metido una convención
+  obsoleta en el proyecto.
+- **Verificado empíricamente:** la salida de `next build` incluye la línea
+  `ƒ Proxy (Middleware)`, lo que confirma que Next reconoce `src/proxy.ts`.
+- **Impacto en la Fase 1, aprobado explícitamente:** se corrigieron cuatro
+  comentarios de `src/backend/lib/supabase/server.ts`, la fila de la Fase 2 en
+  `docs/pdca.md` y el aviso de `.env.example` sobre cuándo hace falta la clave
+  secreta. Ninguna lógica cambió.
+
+## D-012 · El rol nunca se lee de los metadatos del usuario
+
+- **Fecha:** 2026-09-04 · **Fase:** 2 · **Estado:** aplicada
+- **Decisión:** el disparador `crear_perfil_al_registrarse` asigna **siempre**
+  el rol `operario`, el de menos permisos. El rol real lo asigna después el
+  supervisor, desde un sitio donde sí se comprueba quién lo está pidiendo.
+- **Motivo:** `raw_user_meta_data` son datos que el propio usuario envía al
+  registrarse. Un disparador que leyera el rol de ahí permitiría a cualquiera
+  que alcanzase el registro pedir el rol `supervisor` y obtenerlo. Es una
+  escalada de privilegios de manual.
+- **Coste asumido:** el alta son dos pasos en lugar de uno, y si el segundo
+  falla queda una cuenta válida con rol `operario`. El servicio lo detecta y
+  devuelve un mensaje explícito para que el supervisor lo corrija desde la
+  lista, en lugar de dejar una cuenta a medias sin que nadie se entere.
+
+## D-013 · Los perfiles no se borran nunca
+
+- **Fecha:** 2026-09-04 · **Fase:** 2 · **Estado:** aplicada
+- **Decisión:** la tabla `perfiles` **no tiene ninguna política de `DELETE`**.
+  Al estar RLS activado, la ausencia de política significa que nadie puede
+  borrar, ni siquiera un supervisor. Las bajas son lógicas: `activo = false`.
+- **Motivo:** un GMAO tiene que poder responder dentro de dos años a la
+  pregunta «¿quién ejecutó esta orden?». Si el perfil se borrase, esa respuesta
+  se perdería para siempre y con ella la trazabilidad del mantenimiento.
+- **Efecto secundario buscado:** nadie puede darse de baja a sí mismo. Si el
+  único supervisor se desactivara, no quedaría nadie capaz de reactivarlo y
+  habría que entrar al panel de Supabase a arreglarlo a mano. La comprobación
+  está tanto en la interfaz (botón deshabilitado) como en el servidor, porque
+  un botón deshabilitado se salta desde las herramientas del navegador.

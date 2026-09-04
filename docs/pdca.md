@@ -99,13 +99,13 @@ responsable del proyecto.
 
 ### FASE 2 · Autenticación y roles
 
-|                   |                                                                                                                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P**             | Que cada persona entre con su identidad y que el sistema sepa qué puede hacer                                                                                                                           |
-| **D**             | `middleware.ts` para refrescar la sesión · pantallas de acceso · tipo ENUM de roles en PostgreSQL · tabla de perfiles enlazada a `auth.users`                                                           |
-| **C**             | Entrar y salir con dos usuarios de rol distinto · comprobar que la sesión sobrevive más de una hora · que un rol no ve lo que no le toca                                                                |
-| **A**             | **Riesgo conocido:** sin el `middleware`, el síntoma será "me desloguea solo cada hora". Está documentado en `backend/lib/supabase/server.ts` y es la causa número uno de fallos raros de autenticación |
-| **Bloqueada por** | los roles exactos y el método de acceso                                                                                                                                                                 |
+|                   |                                                                                                                                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P**             | Que cada persona entre con su identidad y que el sistema sepa qué puede hacer                                                                                                                      |
+| **D**             | `src/proxy.ts` para refrescar la sesión · pantallas de acceso · tipo ENUM de roles en PostgreSQL · tabla de perfiles enlazada a `auth.users`                                                       |
+| **C**             | Entrar y salir con dos usuarios de rol distinto · comprobar que la sesión sobrevive más de una hora · que un rol no ve lo que no le toca                                                           |
+| **A**             | **Riesgo conocido:** sin el `proxy`, el síntoma será "me desloguea solo cada hora". Está documentado en `backend/lib/supabase/server.ts` y es la causa número uno de fallos raros de autenticación |
+| **Bloqueada por** | los roles exactos y el método de acceso                                                                                                                                                            |
 
 ### FASE 3 · Base de datos core
 

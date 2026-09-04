@@ -4,7 +4,7 @@ Aplicación web multiusuario (objetivo: ~30 usuarios) para la gestión del
 mantenimiento preventivo y correctivo, alimentada con volcados reales de
 **SAP PM** (maestro de materiales y recambios, planes preventivos y sus checks).
 
-**Estado actual: Fase 1 — Setup e infraestructura.**
+**Estado actual: Fase 2 — Autenticación y roles.**
 
 ---
 
@@ -130,9 +130,13 @@ Esto es lo que hace que las reglas de arquitectura sean **obligatorias** y no
 una recomendación: sin CI, un `git push` con las reglas violadas entraría en el
 repositorio sin que nadie se enterase.
 
-> En la Fase 1 la aplicación arranca **sin** `.env.local`: la página de inicio
-> no toca Supabase a propósito. La configuración pasará a ser obligatoria en la
-> Fase 2, cuando exista el login.
+> **Desde la Fase 2, `.env.local` es obligatorio.** En la Fase 1 la aplicación
+> arrancaba sin él porque la portada no tocaba Supabase; ahora toda la
+> aplicación está detrás del acceso, así que sin las variables ni siquiera
+> compila. El error lo dice con todas las letras y señala este mismo fichero.
+>
+> Hacen falta las tres: la URL, la clave pública y **la clave secreta**, que
+> es la que permite a un supervisor dar de alta usuarios.
 
 ---
 

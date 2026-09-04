@@ -42,9 +42,9 @@
  *     lanza una excepción si intentas escribir una cookie.
  *
  * Como el mismo fichero sirve para ambos casos, absorbemos esa excepción
- * concreta. La renovación del token no se pierde: la hará el `middleware`
+ * concreta. La renovación del token no se pierde: la hará el `proxy`
  * que crearemos en la Fase 2, que se ejecuta ANTES del renderizado y sí
- * puede escribir cookies. Si no existiese ese middleware, el síntoma sería
+ * puede escribir cookies. Si no existiese ese proxy, el síntoma sería
  * el clásico "me desloguea solo cada hora".
  *
  * SOBRE EL SEGUNDO PARÁMETRO `cabeceras` DE `setAll`
@@ -54,8 +54,12 @@
  * para impedir que un CDN o un proxy inverso cachee una respuesta que
  * contiene cookies de sesión y se la sirva a OTRO usuario. Aquí no podemos
  * aplicarlas (un Server Component no controla las cabeceras de respuesta);
- * las aplicaremos en el middleware de la Fase 2, que sí construye el objeto
+ * las aplicamos en `src/proxy.ts` (Fase 2), que sí construye el objeto
  * de respuesta.
+ *
+ * OJO CON EL NOMBRE: en Next.js 16 el fichero `middleware.ts` quedó obsoleto
+ * y se renombró a `proxy.ts`. Los tutoriales de Supabase que encontrarás por
+ * ahí siguen diciendo `middleware` porque son anteriores al cambio.
  */
 
 import { cookies } from "next/headers";
@@ -95,7 +99,7 @@ export async function crearClienteServidor() {
             }
           } catch {
             // Estamos dentro de un Server Component: no se pueden escribir
-            // cookies aquí. Lo resolverá el middleware (Fase 2). Ver la
+            // cookies aquí. Lo resuelve `src/proxy.ts`. Ver la
             // explicación larga en la cabecera de este fichero.
           }
         },
